@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRECE — Elixir Funcional Social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* =========================================
+     DESIGN TOKENS
+  ========================================= */
+  :root {
+    --black: #080808;
+    --white: #F4F4F0;
+    --blue: #6BAED4;
+    --blue-dark: #4A8FB5;
+    --grey: #1A1A1A;
+    --grey-mid: #2E2E2E;
+    --grey-light: #8A8A8A;
+    --orange: #D4673B;
+    --purple-accent: #9B8FD4;
+
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  /* =========================================
+     RESET & BASE
+  ========================================= */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--blue);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(107,174,212,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.18s ease;
+  }
+
+  a, button { cursor: none; }
+
+  /* =========================================
+     NAVIGATION
+  ========================================= */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    mix-blend-mode: normal;
+  }
+
+  nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.95) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-label:hover { color: var(--white); }
+
+  .nav-cta {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--blue);
+    color: var(--black);
+    border: none;
+    padding: 10px 28px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--white); transform: translateY(-1px); }
+
+  /* =========================================
+     HERO
+  ========================================= */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 48px 80px;
+    overflow: hidden;
+  }
+
+  /* Grain overlay */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Large background number */
+  .hero-bg-num {
+    position: absolute;
+    right: -2%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(300px, 40vw, 600px);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(107,174,212,0.08);
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--blue);
+  }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(72px, 11vw, 160px);
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--blue);
+  }
+
+  .hero-sub {
+    margin-top: 32px;
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(244,244,240,0.65);
+    max-width: 420px;
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+
+  .hero-actions {
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+
+  .btn-primary {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--blue);
+    color: var(--black);
+    border: none;
+    padding: 16px 48px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: transform 0.4s;
+  }
+
+  .btn-primary:hover {
+    background: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(107,174,212,0.25);
+  }
+
+  .btn-primary:hover::after { transform: translateX(100%) skewX(-15deg); }
+
+  .hero-proof {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--grey-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-proof-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4CAF50;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+
+  /* Product visual in hero */
+  .hero-product {
+    position: absolute;
+    right: 6%;
+    bottom: 0;
+    width: min(420px, 38vw);
+    z-index: 2;
+    opacity: 0;
+    animation: productReveal 1.2s 0.7s forwards;
+  }
+
+  .hero-product img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 40px 80px rgba(107,174,212,0.2));
+  }
+
+  /* Product placeholder when no image */
+  .product-placeholder {
+    width: 100%;
+    aspect-ratio: 0.55;
+    background: linear-gradient(160deg, var(--grey) 0%, #111 100%);
+    border: 1px solid rgba(107,174,212,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-placeholder::before {
+    content: 'TRECE';
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 64px;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+  }
+
+  .product-placeholder-badge {
+    position: absolute;
+    bottom: 40px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    text-transform: uppercase;
+  }
+
+  .product-placeholder-symbol {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    opacity: 0.4;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes productReveal {
+    from { opacity: 0; transform: translateY(40px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Scroll indicator */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 48px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--blue), transparent);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  .scroll-text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+
+  /* =========================================
+     TENSION STRIP
+  ========================================= */
+  .tension-strip {
+    background: var(--grey);
+    padding: 20px 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(107,174,212,0.1);
+    border-bottom: 1px solid rgba(107,174,212,0.1);
+  }
+
+  .tension-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+
+  .tension-item {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0 48px;
+    color: var(--grey-light);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .tension-item span.accent { color: var(--blue); }
+  .tension-item::after {
+    content: '—';
+    color: rgba(107,174,212,0.3);
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* =========================================
+     THE PROBLEM (IDENTITY MIRROR)
+  ========================================= */
+  .problem-section {
+    padding: 120px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--blue);
+  }
+
+  .problem-headline {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(42px, 5vw, 72px);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .problem-headline .strike {
+    position: relative;
+    color: var(--grey-light);
+    display: inline-block;
+  }
+
+  .problem-headline .strike::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 52%;
+    width: 100%;
+    height: 2px;
+    background: var(--orange);
+  }
+
+  .problem-right {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .problem-statement {
+    padding: 28px;
+    border-left: 2px solid var(--grey-mid);
+    transition: border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .problem-statement::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(107,174,212,0.03) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .problem-statement:hover { border-color: var(--blue); }
+  .problem-statement:hover::before { opacity: 1; }
+
+  .problem-statement-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--blue);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  .problem-statement p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: rgba(244,244,240,0.7);
+    font-weight: 300;
+  }
+
+  .problem-statement strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  /* =========================================
+     PRODUCT SECTION
+  ========================================= */
+  .product-section {
+    padding: 80px 48px 120px;
+    background: var(--grey);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-section::before {
+    content: 'TRECE';
+    position: absolute;
+    left: -3%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(200px, 25vw, 400px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(107,174,212,0.05);
+    pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+
+  .product-section-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .product-section-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 64px;
+  }
+
+  .product-section-headline {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(52px, 7vw, 96px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    max-width: 600px;
+  }
+
+  .product-section-headline em {
+    font-style: normal;
+    color: var(--blue);
+  }
+
+  .product-section-sub {
+    font-size: 15px;
+    color: var(--grey-light);
+    max-width: 260px;
+    line-height: 1.6;
+    text-align: right;
+  }
+
+  /* Flavor cards */
+  .flavors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .flavor-card {
+    background: var(--black);
+    padding: 40px 32px;
+    cursor: none;
+    transition: transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flavor-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .flavor-card.blue::before { background: linear-gradient(135deg, rgba(107,174,212,0.06) 0%, transparent 60%); }
+  .flavor-card.orange::before { background: linear-gradient(135deg, rgba(212,103,59,0.06) 0%, transparent 60%); }
+  .flavor-card.purple::before { background: linear-gradient(135deg, rgba(155,143,212,0.06) 0%, transparent 60%); }
+
+  .flavor-card:hover { transform: translateY(-4px); }
+  .flavor-card:hover::before { opacity: 1; }
+
+  .flavor-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+  }
+
+  .flavor-number {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey-light);
+  }
+
+  .flavor-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .blue .flavor-dot { background: var(--blue); }
+  .orange .flavor-dot { background: var(--orange); }
+  .purple .flavor-dot { background: var(--purple-accent); }
+
+  /* Can visual placeholder */
+  .can-visual {
+    width: 100%;
+    aspect-ratio: 0.7;
+    background: linear-gradient(160deg, #111 0%, #0A0A0A 100%);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .can-visual img {
+    width: 75%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+  }
+
+  .can-visual-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.4;
+  }
+
+  .can-visual-placeholder .can-name {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 42px;
+    letter-spacing: 0.03em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    color: var(--white);
+  }
+
+  .blue .can-visual { border-bottom: 2px solid var(--blue); }
+  .orange .can-visual { border-bottom: 2px solid var(--orange); }
+  .purple .can-visual { border-bottom: 2px solid var(--purple-accent); }
+
+  .flavor-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .blue .flavor-name { color: var(--blue); }
+  .orange .flavor-name { color: var(--orange); }
+  .purple .flavor-name { color: var(--purple-accent); }
+
+  .flavor-desc {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 8px;
+    font-family: var(--font-display);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .flavor-ingredients {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+  }
+
+  /* Bundle / CTA block */
+  .bundle-block {
+    background: var(--black);
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    border: 1px solid rgba(107,174,212,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bundle-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+
+  .bundle-tag {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--blue);
+    color: var(--black);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+  }
+
+  .bundle-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 48px;
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .bundle-desc {
+    font-size: 14px;
+    color: var(--grey-light);
+    line-height: 1.6;
+    max-width: 420px;
+  }
+
+  .bundle-desc strong { color: var(--white); }
+
+  .bundle-right {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+  }
+
+  .bundle-price {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--white);
+  }
+
+  .bundle-price sub {
+    font-size: 22px;
+    vertical-align: middle;
+    color: var(--grey-light);
+    font-weight: 400;
+  }
+
+  .bundle-price-unit {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--grey-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: -8px;
+  }
+
+  /* =========================================
+     INGREDIENTS SCIENCE
+  ========================================= */
+  .science-section {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .science-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 80px;
+    align-items: end;
+  }
+
+  .science-headline {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .science-headline em { font-style: normal; color: var(--blue); }
+
+  .science-intro {
+    font-size: 16px;
+    line-height: 1.75;
+    color: rgba(244,244,240,0.6);
+    font-weight: 300;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--grey-mid);
+  }
+
+  .ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .ingredient-card {
+    background: var(--grey);
+    padding: 40px 32px;
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .ingredient-card:hover { background: #222; }
+
+  .ingredient-icon {
+    width: 40px; height: 40px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ingredient-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ingredient-num::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(107,174,212,0.2);
+  }
+
+  .ingredient-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+
+  .ingredient-latin {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--grey-light);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .ingredient-benefit {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(244,244,240,0.6);
+    font-weight: 300;
+  }
+
+  .ingredient-benefit strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  /* =========================================
+     SOCIAL PROOF / MANIFESTO
+  ========================================= */
+  .manifesto-section {
+    padding: 0 48px 80px;
+    background: var(--grey);
+  }
+
+  .manifesto-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 80px 0;
+    border-top: 1px solid rgba(107,174,212,0.1);
+  }
+
+  .manifesto-quote {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(32px, 4.5vw, 64px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto 48px;
+  }
+
+  .manifesto-quote em {
+    font-style: normal;
+    color: var(--blue);
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 80px;
+  }
+
+  .stat-item {
+    background: var(--black);
+    padding: 40px 32px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(48px, 6vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .stat-value span { color: var(--blue); }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+    line-height: 1.5;
+  }
+
+  .stat-source {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(138,138,138,0.5);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* =========================================
+     RITUAL / HOW IT WORKS
+  ========================================= */
+  .ritual-section {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ritual-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .ritual-sticky {
+    position: sticky;
+    top: 120px;
+  }
+
+  .ritual-headline {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(52px, 6vw, 80px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  .ritual-headline em { font-style: normal; color: var(--blue); }
+
+  .ritual-sub {
+    font-size: 15px;
+    color: var(--grey-light);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .ritual-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ritual-step {
+    background: var(--grey);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    align-items: start;
+    transition: background 0.2s;
+  }
+
+  .ritual-step:hover { background: #222; }
+
+  .ritual-step-num {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 52px;
+    line-height: 1;
+    color: rgba(107,174,212,0.2);
+    letter-spacing: -0.03em;
+  }
+
+  .ritual-step-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .ritual-step-desc {
+    font-size: 14px;
+    color: rgba(244,244,240,0.55);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* =========================================
+     FINAL CTA
+  ========================================= */
+  .final-cta {
+    padding: 120px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: var(--black);
+  }
+
+  .final-cta::before {
+    content: '013';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(200px, 35vw, 480px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(107,174,212,0.04);
+    pointer-events: none;
+  }
+
+  .final-cta-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .final-cta-headline {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(52px, 8vw, 120px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .final-cta-sub {
+    font-size: 18px;
+    color: rgba(244,244,240,0.5);
+    max-width: 440px;
+    margin: 0 auto 48px;
+    line-height: 1.65;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+  }
+
+  .final-cta-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scarcity-note {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+  }
+
+  .scarcity-note span { color: var(--orange); }
+
+  /* =========================================
+     FOOTER
+  ========================================= */
+  footer {
+    background: var(--grey);
+    padding: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(107,174,212,0.08);
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: 0.08em;
+    color: var(--white);
+  }
+
+  .footer-tagline {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey-light);
+    text-transform: uppercase;
+  }
+
+  .footer-right {
+    text-align: right;
+  }
+
+  .footer-right a {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--grey-light);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .footer-right a:hover { color: var(--blue); }
+
+  /* =========================================
+     SCROLL ANIMATIONS
+  ========================================= */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* =========================================
+     RESPONSIVE
+  ========================================= */
+  @media (max-width: 1024px) {
+    .problem-section,
+    .science-header,
+    .ritual-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .flavors-grid,
+    .ingredients-grid,
+    .stats-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+
+    .product-section-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .product-section-sub { text-align: left; }
+
+    .bundle-block {
+      grid-template-columns: 1fr;
+    }
+
+    .bundle-right { align-items: flex-start; }
+
+    .hero-product { display: none; }
+
+    nav { padding: 20px 24px; }
+    .hero, .problem-section, .science-section,
+    .ritual-section, .final-cta,
+    .product-section { padding-left: 24px; padding-right: 24px; }
+
+    .manifesto-section { padding-left: 24px; padding-right: 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 24px; text-align: center; }
+    .footer-right { text-align: center; }
+
+    .ritual-sticky { position: static; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-label { display: none; }
+    .flavors-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+    .ingredients-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- =================== NAVIGATION =================== -->
+<nav>
+  <a href="#" class="nav-logo">TRECE</a>
+  <div class="nav-right">
+    <a href="#producto" class="nav-label">Producto</a>
+    <a href="#ciencia" class="nav-label">Ingredientes</a>
+    <a href="#comprar" class="nav-cta">Ordenar</a>
+  </div>
+</nav>
+
+<!-- =================== HERO =================== -->
+<section class="hero">
+  <div class="hero-bg-num">13</div>
+
+  <p class="hero-eyebrow">Elixir Funcional Social · 013</p>
+
+  <h1 class="hero-headline">
+    Socializa<br>
+    sin <em>ceder</em><br>
+    terreno.
+  </h1>
+
+  <p class="hero-sub">
+    L-Teanina · Melena de León · Treonato de Magnesio.<br>
+    Claridad mental para las conversaciones que importan.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#comprar" class="btn-primary">Pedir ahora — Pack x6</a>
+    <span class="hero-proof">
+      <span class="hero-proof-dot"></span>
+      Primer lote disponible · Envíos Colombia
+    </span>
+  </div>
+
+  <!-- Product visual -->
+  <div class="hero-product">
+    <div class="can-visual" style="aspect-ratio:0.62; background: transparent; border-bottom: none;">
+      <!-- Replace src with actual product image -->
+      <img src="assets/images/IMG_3212.jpg" 
+           alt="TRECE Can" 
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <div class="can-visual-placeholder" style="display:none;">
+        <span class="can-name">TRECE</span>
+        <span class="product-placeholder-badge">Elixir Social</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- =================== TENSION STRIP =================== -->
+<div class="tension-strip">
+  <div class="tension-track">
+    <div class="tension-item">Sin azúcar añadida <span class="accent">—</span></div>
+    <div class="tension-item">Sin alcohol <span class="accent">—</span></div>
+    <div class="tension-item">Sin edulcorantes <span class="accent">—</span></div>
+    <div class="tension-item">3 adaptógenos funcionales <span class="accent">—</span></div>
+    <div class="tension-item">Registro sanitario <span class="accent">INVIMA RSA-1472-2025 —</span></div>
+    <div class="tension-item">269ml · Bebida gasificada <span class="accent">—</span></div>
+    <!-- Duplicate for seamless loop -->
+    <div class="tension-item">Sin azúcar añadida <span class="accent">—</span></div>
+    <div class="tension-item">Sin alcohol <span class="accent">—</span></div>
+    <div class="tension-item">Sin edulcorantes <span class="accent">—</span></div>
+    <div class="tension-item">3 adaptógenos funcionales <span class="accent">—</span></div>
+    <div class="tension-item">Registro sanitario <span class="accent">INVIMA RSA-1472-2025 —</span></div>
+    <div class="tension-item">269ml · Bebida gasificada <span class="accent">—</span></div>
+  </div>
+</div>
+
+<!-- =================== THE PROBLEM =================== -->
+<section class="problem-section">
+  <div class="reveal">
+    <p class="section-label">El dilema</p>
+    <h2 class="problem-headline">
+      Mañana<br>
+      tienes que<br>
+      <span class="strike">entrenar.</span><br>
+      Esta noche<br>
+      no deberías<br>
+      elegir.
+    </h2>
+  </div>
+  <div class="problem-right">
+    <div class="problem-statement reveal reveal-delay-1">
+      <p class="problem-statement-num">01 —</p>
+      <p>Quieres estar presente con las personas que te importan. Pero <strong>el alcohol no encaja con quién estás construyendo ser.</strong></p>
+    </div>
+    <div class="problem-statement reveal reveal-delay-2">
+      <p class="problem-statement-num">02 —</p>
+      <p>Las opciones sin alcohol parecen una renuncia. <strong>Una soda, un agua.</strong> Como si socializar diferente fuera excusarte de la mesa.</p>
+    </div>
+    <div class="problem-statement reveal reveal-delay-3">
+      <p class="problem-statement-num">03 —</p>
+      <p>TRECE existe porque <strong>socializar con claridad no es un sacrificio</strong> — es la versión más rica de la noche.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PRODUCT =================== -->
+<section class="product-section" id="producto">
+  <div class="product-section-inner">
+    <div class="product-section-top reveal">
+      <div>
+        <p class="section-label">Los sabores</p>
+        <h2 class="product-section-headline">
+          Elige tu<br>
+          <em>Elixir</em>
+        </h2>
+      </div>
+      <p class="product-section-sub">
+        Infusión gasificada con adaptógenos. Sabor complejo, no una soda cualquiera.
+      </p>
+    </div>
+
+    <div class="flavors-grid">
+      <!-- Flavor 1 -->
+      <div class="flavor-card blue reveal">
+        <div class="flavor-card-top">
+          <span class="flavor-number">01 / 03</span>
+          <span class="flavor-dot"></span>
+        </div>
+        <div class="can-visual">
+          <img src="assets/images/IMG_3212.jpg" 
+               alt="TRECE Mandarina Limón"
+               style="width:65%; filter: drop-shadow(0 20px 40px rgba(107,174,212,0.3));"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+          <div class="can-visual-placeholder" style="display:none;">
+            <span class="can-name">TRECE</span>
+          </div>
+        </div>
+        <p class="flavor-name">Azul · Clásico</p>
+        <p class="flavor-desc">Mandarina — Limón — Cardamomo</p>
+        <p class="flavor-ingredients">Melena de León · Treonato de Mg · L-Teanina</p>
+      </div>
+
+      <!-- Flavor 2 -->
+      <div class="flavor-card orange reveal reveal-delay-1">
+        <div class="flavor-card-top">
+          <span class="flavor-number">02 / 03</span>
+          <span class="flavor-dot"></span>
+        </div>
+        <div class="can-visual">
+          <div class="can-visual-placeholder" style="display:flex;">
+            <span class="can-name" style="color: var(--orange);">TRECE</span>
+          </div>
+        </div>
+        <p class="flavor-name" style="color: var(--orange);">Naranja · Tropical</p>
+        <p class="flavor-desc">Flor de Jamaica — Naranja — Jengibre</p>
+        <p class="flavor-ingredients">Melena de León · Treonato de Mg · L-Teanina</p>
+      </div>
+
+      <!-- Flavor 3 -->
+      <div class="flavor-card purple reveal reveal-delay-2">
+        <div class="flavor-card-top">
+          <span class="flavor-number">03 / 03</span>
+          <span class="flavor-dot"></span>
+        </div>
+        <div class="can-visual">
+          <div class="can-visual-placeholder" style="display:flex;">
+            <span class="can-name" style="color: var(--purple-accent);">TRECE</span>
+          </div>
+        </div>
+        <p class="flavor-name">Morado · Frutal</p>
+        <p class="flavor-desc">Arándano — Frambuesa</p>
+        <p class="flavor-ingredients">Melena de León · Treonato de Mg · L-Teanina</p>
+      </div>
+    </div>
+
+    <!-- Bundle CTA -->
+    <div class="bundle-block reveal" id="comprar">
+      <div class="bundle-tag">Más popular</div>
+      <div>
+        <h3 class="bundle-title">Pack<br>Explorador<br>x6</h3>
+        <p class="bundle-desc">
+          <strong>2 de cada sabor.</strong> Para que encuentres el tuyo sin comprometerte. Sin azúcar, sin resaca, con todo lo que necesitas para llegar al otro día siendo tú.
+        </p>
+      </div>
+      <div class="bundle-right">
+        <div>
+          <p class="bundle-price"><sub>$</sub>89.900</p>
+          <p class="bundle-price-unit">COP · 6 latas · 269ml c/u</p>
+        </div>
+        <a href="#" class="btn-primary" style="white-space:nowrap;">Agregar al carrito →</a>
+        <p style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--grey-light); text-transform: uppercase;">Envío gratis · Medellín y Bogotá</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =================== MANIFESTO / SOCIAL PROOF =================== -->
+<section class="manifesto-section">
+  <div class="manifesto-inner">
+    <p class="manifesto-quote reveal">
+      "Hay conversaciones que solo pasan cuando estás <em>completamente presente</em>. Eso es lo que hacemos posible."
+    </p>
+
+    <div class="stats-row">
+      <div class="stat-item reveal">
+        <p class="stat-value"><span>50</span>%</p>
+        <p class="stat-label">De adultos jóvenes en EE.UU.<br>ya no beben alcohol</p>
+        <p class="stat-source">Gallup, 2025 — Mínimo histórico en 90 años</p>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <p class="stat-value"><span>7</span>/10</p>
+        <p class="stat-label">Consumidores evitan azúcar<br>añadida y edulcorantes</p>
+        <p class="stat-source">IFIC Food & Health Survey, 2023</p>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <p class="stat-value"><span>35</span>%</p>
+        <p class="stat-label">Crecimiento anual del mercado<br>RTD no alcohólico en México</p>
+        <p class="stat-source">Food Tech, 2024</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SCIENCE =================== -->
+<section class="science-section" id="ciencia">
+  <div class="science-header">
+    <h2 class="science-headline reveal">
+      Tres<br>
+      ingredientes.<br>
+      Un <em>propósito.</em>
+    </h2>
+    <p class="science-intro reveal">
+      No es una soda con extracto de hierbas. TRECE fue formulado para reducir la ansiedad social, sostener el foco mental y proteger tu rendimiento al día siguiente. Cada ingrediente tiene un trabajo específico.
+    </p>
+  </div>
+
+  <div class="ingredients-grid">
+    <div class="ingredient-card reveal">
+      <p class="ingredient-num">01</p>
+      <h3 class="ingredient-name">L-Teanina</h3>
+      <p class="ingredient-latin">Camellia sinensis · Aminoácido</p>
+      <p class="ingredient-benefit">
+        Reduce la ansiedad social sin sedación. Activa el estado de <strong>calma alerta</strong>: estás relajado pero completamente presente en la conversación.
+      </p>
+    </div>
+    <div class="ingredient-card reveal reveal-delay-1">
+      <p class="ingredient-num">02</p>
+      <h3 class="ingredient-name">Melena de León</h3>
+      <p class="ingredient-latin">Hericium erinaceus · Hongo funcional</p>
+      <p class="ingredient-benefit">
+        Estimula el factor de crecimiento nervioso (NGF). Claridad cognitiva, <strong>foco sostenido</strong>, sin el crash. Tu mente trabaja contigo, no contra ti.
+      </p>
+    </div>
+    <div class="ingredient-card reveal reveal-delay-2">
+      <p class="ingredient-num">03</p>
+      <h3 class="ingredient-name">Treonato de Mg</h3>
+      <p class="ingredient-latin">Magnesium threonate · Mineral nootrópico</p>
+      <p class="ingredient-benefit">
+        La forma de magnesio que cruza la barrera hematoencefálica. Regula el cortisol, mejora el sueño y la <strong>recuperación cognitiva</strong> al día siguiente.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== RITUAL =================== -->
+<section class="ritual-section">
+  <div class="ritual-grid">
+    <div class="ritual-sticky">
+      <p class="section-label">El ritual</p>
+      <h2 class="ritual-headline reveal">
+        Tu noche,<br>
+        <em>sin</em><br>
+        concesiones.
+      </h2>
+      <p class="ritual-sub reveal" style="margin-top: 24px;">
+        TRECE no te pide que cambies de planes. Te da las herramientas para disfrutarlos en tu mejor versión.
+      </p>
+    </div>
+    <div class="ritual-steps">
+      <div class="ritual-step reveal">
+        <span class="ritual-step-num">01</span>
+        <div>
+          <h4 class="ritual-step-title">Abre la lata</h4>
+          <p class="ritual-step-desc">Sin ritual complicado. Sin preparación. Frío, gasificado y listo para el bar, la cena o la terraza. El acto de elegirlo ya dice algo sobre ti.</p>
+        </div>
+      </div>
+      <div class="ritual-step reveal reveal-delay-1">
+        <span class="ritual-step-num">02</span>
+        <div>
+          <h4 class="ritual-step-title">Entra en modo presente</h4>
+          <p class="ritual-step-desc">En 30-45 minutos los adaptógenos hacen su trabajo. La ansiedad social disminuye. La conversación se vuelve más profunda. Estás ahí de verdad.</p>
+        </div>
+      </div>
+      <div class="ritual-step reveal reveal-delay-2">
+        <span class="ritual-step-num">03</span>
+        <div>
+          <h4 class="ritual-step-title">Entrena mañana</h4>
+          <p class="ritual-step-desc">Sin resaca. Sin ese tiempo perdido recuperándote. El treonato de magnesio ya trabajó mientras dormías. La noche y el día no compiten más.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FINAL CTA =================== -->
+<section class="final-cta">
+  <p class="final-cta-label reveal">Primer lote · Disponible ahora</p>
+  <h2 class="final-cta-headline reveal">
+    Bienvenido<br>al club.
+  </h2>
+  <p class="final-cta-sub reveal">
+    Socializas. Eres tú. Al otro día sigues siendo tú.<br>
+    Sin elegir entre los dos.
+  </p>
+  <div class="final-cta-actions reveal">
+    <a href="#" class="btn-primary" style="font-size: 18px; padding: 20px 64px;">
+      Pedir Pack x6 →
+    </a>
+    <p class="scarcity-note">
+      <span>⬤</span> Primer lote limitado · Envíos Colombia
+    </p>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <div>
+    <p class="footer-logo">TRECE</p>
+    <p class="footer-tagline" style="margin-top: 4px;">Elixir Funcional Social · 013</p>
+  </div>
+  <div class="footer-right">
+    <a href="#">Instagram</a>
+    <a href="#">contacto@trece.co</a>
+    <p style="font-family: var(--font-mono); font-size: 9px; color: rgba(138,138,138,0.4); letter-spacing: 0.1em; margin-top: 8px; text-transform: uppercase;">INVIMA RSA-1472-2025 · Fabricado en Rionegro, Antioquia</p>
+  </div>
+</footer>
+
+<!-- =================== JAVASCRIPT =================== -->
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top = e.clientY + 'px';
+    }, 60);
+  });
+
+  document.querySelectorAll('a, button, .flavor-card, .ritual-step').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
+      ring.style.transform = 'translate(-50%, -50%) scale(1.5)';
+      ring.style.borderColor = 'rgba(107,174,212,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+      ring.style.transform = 'translate(-50%, -50%) scale(1)';
+      ring.style.borderColor = 'rgba(107,174,212,0.5)';
+    });
+  });
+
+  // Scroll reveal
+  const revealElements = document.querySelectorAll('.reveal');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  revealElements.forEach(el => observer.observe(el));
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      nav.style.backdropFilter = 'blur(20px)';
+    } else {
+      nav.style.backdropFilter = 'none';
+    }
+  });
+
+  // Stat counter animation
+  const statValues = document.querySelectorAll('.stat-value');
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const span = entry.target.querySelector('span');
+        if (!span || span.dataset.animated) return;
+        span.dataset.animated = true;
+        const target = parseFloat(span.textContent);
+        const isDecimal = span.textContent.includes('.');
+        let current = 0;
+        const step = target / 40;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) {
+            current = target;
+            clearInterval(timer);
+          }
+          span.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+        }, 30);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  statValues.forEach(el => statObserver.observe(el));
+</script>
+
+</body>
+</html>
