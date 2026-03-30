@@ -147,6 +147,19 @@
     justify-content: center;
     padding: 140px 48px 80px;
     overflow: hidden;
+    background-image: url('assets/images/banner2(horizontal).png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(8,8,8,0.85) 45%, rgba(8,8,8,0.2) 100%);
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* Grain overlay */
@@ -176,6 +189,14 @@
     z-index: 0;
     user-select: none;
     letter-spacing: -0.05em;
+  }
+
+  .hero-eyebrow,
+  .hero-headline,
+  .hero-sub,
+  .hero-actions {
+    position: relative;
+    z-index: 2;
   }
 
   .hero-eyebrow {
@@ -304,13 +325,7 @@
 
   /* Product visual in hero */
   .hero-product {
-    position: absolute;
-    right: 6%;
-    bottom: 0;
-    width: min(420px, 38vw);
-    z-index: 2;
-    opacity: 0;
-    animation: productReveal 1.2s 0.7s forwards;
+    display: none;
   }
 
   .hero-product img {
@@ -459,13 +474,62 @@
      THE PROBLEM (IDENTITY MIRROR)
   ========================================= */
   .problem-section {
-    padding: 120px 48px;
+    position: relative;
+    height: 204vh;
+    padding: 0;
+    max-width: none;
+    margin: 0;
+  }
+
+  .problem-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
+    overflow: hidden;
     max-width: 1400px;
     margin: 0 auto;
+  }
+
+  .problem-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .problem-can {
+    width: min(90%, 72vh);
+    aspect-ratio: 1;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .problem-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 48px 32px 64px;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .problem-stage {
+    position: relative;
+    width: 100%;
+  }
+
+  .problem-header {
+    /* reference element — gives the stage its natural height */
+    will-change: transform, opacity;
+  }
+
+  .problem-statement {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
   .section-label {
@@ -490,8 +554,8 @@
   .problem-headline {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(42px, 5vw, 72px);
-    line-height: 1;
+    font-size: clamp(28px, 3.2vw, 52px);
+    line-height: 1.05;
     text-transform: uppercase;
     letter-spacing: -0.01em;
   }
@@ -512,18 +576,13 @@
     background: var(--orange);
   }
 
-  .problem-right {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
-
   .problem-statement {
-    padding: 28px;
+    padding: 20px 28px;
     border-left: 2px solid var(--grey-mid);
     transition: border-color 0.3s;
-    position: relative;
     overflow: hidden;
+    opacity: 0;
+    will-change: transform, opacity;
   }
 
   .problem-statement::before {
@@ -692,6 +751,13 @@
     filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
   }
 
+  .can-visual img.cover-fill {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: none;
+  }
+
   .can-visual-placeholder {
     display: flex;
     flex-direction: column;
@@ -824,9 +890,9 @@
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--grey-light);
+    margin-top: 16px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-top: -8px;
   }
 
   /* =========================================
@@ -1069,12 +1135,33 @@
 
   .ritual-step:hover { background: #222; }
 
+  .ritual-step {
+    cursor: pointer;
+  }
+
+  .ritual-step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ritual-step-chevron {
+    font-size: 18px;
+    color: var(--grey-light);
+    transition: transform 0.3s ease;
+    line-height: 1;
+  }
+
+  .ritual-step.open .ritual-step-chevron {
+    transform: rotate(180deg);
+  }
+
   .ritual-step-num {
     font-family: var(--font-display);
     font-weight: 900;
     font-size: 52px;
     line-height: 1;
-    color: rgba(107,174,212,0.2);
+    color: var(--blue);
     letter-spacing: -0.03em;
   }
 
@@ -1084,7 +1171,7 @@
     font-size: 20px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: 0;
   }
 
   .ritual-step-desc {
@@ -1092,6 +1179,17 @@
     color: rgba(244,244,240,0.55);
     line-height: 1.7;
     font-weight: 300;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    margin-top: 0;
+  }
+
+  .ritual-step.open .ritual-step-desc {
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 12px;
   }
 
   /* =========================================
@@ -1240,12 +1338,17 @@
      RESPONSIVE
   ========================================= */
   @media (max-width: 1024px) {
-    .problem-section,
     .science-header,
     .ritual-grid {
       grid-template-columns: 1fr;
       gap: 48px;
     }
+
+    .problem-section { height: 140vh; }
+    .problem-pin { position: sticky; top: 0; grid-template-columns: 1fr; grid-template-rows: 54vh 1fr; height: 100vh; align-items: start; }
+    .problem-left { height: 54vh; align-items: flex-end; padding-bottom: 0; }
+    .problem-can { width: 72%; max-width: 320px; aspect-ratio: 1; }
+    .problem-right { height: 100%; padding: 16px 28px 48px; justify-content: center; }
 
     .flavors-grid,
     .ingredients-grid,
@@ -1283,6 +1386,11 @@
   }
 
   @media (max-width: 768px) {
+    .hero {
+      background-image: url('assets/images/banner1(1x1).png');
+      background-position: top center;
+    }
+
     .nav-label { display: none; }
     .flavors-grid { grid-template-columns: 1fr; }
     .stats-row { grid-template-columns: 1fr; }
@@ -1334,10 +1442,9 @@
 
   <!-- Product visual -->
   <div class="hero-product">
-    <div class="can-visual" style="aspect-ratio:0.62; background: transparent; border-bottom: none;">
-      <!-- Replace src with actual product image -->
-      <img src="assets/images/IMG_3212.jpg" 
-           alt="TRECE Can" 
+    <div class="can-visual" style="aspect-ratio:1; background: transparent; border-bottom: none;">
+      <img src="assets/images/banner1(1x1).png"
+           alt="TRECE Can"
            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
       <div class="can-visual-placeholder" style="display:none;">
         <span class="can-name">TRECE</span>
@@ -1346,10 +1453,6 @@
     </div>
   </div>
 
-  <div class="scroll-indicator">
-    <div class="scroll-line"></div>
-    <span class="scroll-text">Scroll</span>
-  </div>
 </section>
 
 <!-- =================== TENSION STRIP =================== -->
@@ -1373,30 +1476,38 @@
 
 <!-- =================== THE PROBLEM =================== -->
 <section class="problem-section">
-  <div class="reveal">
-    <p class="section-label">El dilema</p>
-    <h2 class="problem-headline">
-      Mañana<br>
-      tienes que<br>
-      <span class="strike">entrenar.</span><br>
-      Esta noche<br>
-      no deberías<br>
-      elegir.
-    </h2>
-  </div>
-  <div class="problem-right">
-    <div class="problem-statement reveal reveal-delay-1">
-      <p class="problem-statement-num">01 —</p>
-      <p>Quieres estar presente con las personas que te importan. Pero <strong>el alcohol no encaja con quién estás construyendo ser.</strong></p>
+  <div class="problem-pin">
+
+    <!-- Left: can frame sequence -->
+    <div class="problem-left">
+      <canvas id="can-canvas" class="problem-can" width="960" height="960"></canvas>
     </div>
-    <div class="problem-statement reveal reveal-delay-2">
-      <p class="problem-statement-num">02 —</p>
-      <p>Las opciones sin alcohol parecen una renuncia. <strong>Una soda, un agua.</strong> Como si socializar diferente fuera excusarte de la mesa.</p>
+
+    <!-- Right: stacked stage — title + cards replace each other -->
+    <div class="problem-right">
+      <div class="problem-stage">
+        <div class="problem-header" data-stage-index="0">
+          <p class="section-label">El dilema</p>
+          <h2 class="problem-headline">
+            Mañana tienes que <span class="strike">entrenar.</span><br>
+            Esta noche no deberías elegir.
+          </h2>
+        </div>
+        <div class="problem-statement" data-stage-index="1">
+          <p class="problem-statement-num">01 —</p>
+          <p>Quieres estar presente con las personas que te importan. Pero <strong>el alcohol no encaja con quién estás construyendo ser.</strong></p>
+        </div>
+        <div class="problem-statement" data-stage-index="2">
+          <p class="problem-statement-num">02 —</p>
+          <p>Las opciones sin alcohol parecen una renuncia. <strong>Una soda, un agua.</strong> Como si socializar diferente fuera excusarte de la mesa.</p>
+        </div>
+        <div class="problem-statement" data-stage-index="3">
+          <p class="problem-statement-num">03 —</p>
+          <p>TRECE existe porque <strong>socializar con claridad no es un sacrificio</strong> — es la versión más rica de la noche.</p>
+        </div>
+      </div>
     </div>
-    <div class="problem-statement reveal reveal-delay-3">
-      <p class="problem-statement-num">03 —</p>
-      <p>TRECE existe porque <strong>socializar con claridad no es un sacrificio</strong> — es la versión más rica de la noche.</p>
-    </div>
+
   </div>
 </section>
 
@@ -1424,9 +1535,9 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual">
-          <img src="assets/images/IMG_3212.jpg" 
+          <img src="assets/images/lata frontal.png"
                alt="TRECE Mandarina Limón"
-               style="width:65%; filter: drop-shadow(0 20px 40px rgba(107,174,212,0.3));"
+               class="cover-fill"
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
           <div class="can-visual-placeholder" style="display:none;">
             <span class="can-name">TRECE</span>
@@ -1578,21 +1689,30 @@
       <div class="ritual-step reveal">
         <span class="ritual-step-num">01</span>
         <div>
-          <h4 class="ritual-step-title">Abre la lata</h4>
+          <div class="ritual-step-header">
+            <h4 class="ritual-step-title">Abre la lata</h4>
+            <span class="ritual-step-chevron">↓</span>
+          </div>
           <p class="ritual-step-desc">Sin ritual complicado. Sin preparación. Frío, gasificado y listo para el bar, la cena o la terraza. El acto de elegirlo ya dice algo sobre ti.</p>
         </div>
       </div>
       <div class="ritual-step reveal reveal-delay-1">
         <span class="ritual-step-num">02</span>
         <div>
-          <h4 class="ritual-step-title">Entra en modo presente</h4>
+          <div class="ritual-step-header">
+            <h4 class="ritual-step-title">Entra en modo presente</h4>
+            <span class="ritual-step-chevron">↓</span>
+          </div>
           <p class="ritual-step-desc">En 30-45 minutos los adaptógenos hacen su trabajo. La ansiedad social disminuye. La conversación se vuelve más profunda. Estás ahí de verdad.</p>
         </div>
       </div>
       <div class="ritual-step reveal reveal-delay-2">
         <span class="ritual-step-num">03</span>
         <div>
-          <h4 class="ritual-step-title">Entrena mañana</h4>
+          <div class="ritual-step-header">
+            <h4 class="ritual-step-title">Entrena mañana</h4>
+            <span class="ritual-step-chevron">↓</span>
+          </div>
           <p class="ritual-step-desc">Sin resaca. Sin ese tiempo perdido recuperándote. El treonato de magnesio ya trabajó mientras dormías. La noche y el día no compiten más.</p>
         </div>
       </div>
@@ -1673,6 +1793,91 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
   revealElements.forEach(el => observer.observe(el));
+
+  // Problem section — sequential replace animation
+  const problemSection  = document.querySelector('.problem-section');
+  const stageElements   = document.querySelectorAll('[data-stage-index]');
+
+  function clamp(val, min, max) { return Math.min(max, Math.max(min, val)); }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  // ── Scroll-driven frame animation ──────────────────────────────────
+  const FRAME_COUNT = 97;
+  const canvasEl    = document.getElementById('can-canvas');
+  const ctx         = canvasEl ? canvasEl.getContext('2d') : null;
+
+  const frames = [];
+  let framesLoaded = 0;
+
+  function drawFrame(index) {
+    if (!ctx) return;
+    const img = frames[index];
+    if (!img || !img.complete || img.naturalWidth === 0) return;
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    ctx.drawImage(img, 0, 0, canvasEl.width, canvasEl.height);
+  }
+
+  if (canvasEl && ctx) {
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new Image();
+      const padded = String(i).padStart(3, '0');
+      img.src = `assets/images/frames/frame-${padded}.jpg`;
+      img.onload = () => {
+        framesLoaded++;
+        if (i === 1) drawFrame(0);
+      };
+      frames.push(img);
+    }
+  }
+  // ───────────────────────────────────────────────────────────────────
+
+  // 4 elements (title + 3 cards), each occupies a 0.25 slot
+  // Crossfade window: 0.15 centered at each slot boundary (0.25, 0.50, 0.75)
+  const SLOTS    = stageElements.length; // 4
+  const SLOT_W   = 1 / SLOTS;           // 0.25
+  const FADE_W   = 0.15;
+
+  function updateProblemSection() {
+    if (!problemSection) return;
+    const rect       = problemSection.getBoundingClientRect();
+    const scrollable = problemSection.offsetHeight - window.innerHeight;
+    const progress   = clamp(-rect.top / scrollable, 0, 1);
+
+    // Frame sequence
+    if (ctx && framesLoaded > 0) {
+      const frameIndex = clamp(Math.round(progress * (FRAME_COUNT - 1)), 0, FRAME_COUNT - 1);
+      drawFrame(frameIndex);
+    }
+
+    stageElements.forEach((el) => {
+      const i = parseInt(el.dataset.stageIndex);
+
+      // Fade-in: at boundary i*SLOT_W (first element starts fully visible)
+      const fadeInP  = i === 0 ? 1 : easeOut(clamp((progress - (i * SLOT_W - FADE_W / 2)) / FADE_W, 0, 1));
+      // Fade-out: at boundary (i+1)*SLOT_W (last element never fades out)
+      const fadeOutP = i === SLOTS - 1 ? 0 : easeOut(clamp((progress - ((i + 1) * SLOT_W - FADE_W / 2)) / FADE_W, 0, 1));
+
+      const opacity = fadeInP * (1 - fadeOutP);
+
+      // Slide: enters from +20px below, exits to -20px above
+      const ty_el = 20 * (1 - fadeInP) - 20 * fadeOutP;
+
+      el.style.opacity   = opacity;
+      el.style.transform = `translateY(${ty_el}px)`;
+    });
+  }
+
+  window.addEventListener('scroll', updateProblemSection, { passive: true });
+  updateProblemSection();
+
+  // Ritual accordion
+  document.querySelectorAll('.ritual-step').forEach(step => {
+    step.addEventListener('click', () => {
+      const isOpen = step.classList.contains('open');
+      document.querySelectorAll('.ritual-step').forEach(s => s.classList.remove('open'));
+      if (!isOpen) step.classList.add('open');
+    });
+  });
 
   // Nav scroll effect
   const nav = document.querySelector('nav');
