@@ -130,6 +130,71 @@ const FADE_W = 0.15;
 
 ---
 
+## Section: Elige Tu Elixir (Product Section) — Current State
+
+### Layout
+- **Desktop (>1024px):** 3-column grid (`repeat(3, 1fr)`, `gap: 2px`). All 3 flavor cards visible at once.
+- **Tablet + Mobile (≤1024px):** Horizontal scroll carousel. Cards snap per item. Second card peeks to signal scrollability.
+
+### Availability
+- **Card 01 (Blue):** In stock. Has real product image (`lata frontal.png`).
+- **Card 02 (Orange):** Out of stock (`Agotadas`).
+- **Card 03 (Purple):** Out of stock (`Agotadas`).
+
+### Out-of-stock treatment
+Cards 02 and 03 use `.can-visual-placeholder` with class `.can-name-soldout` instead of `.can-name`:
+```html
+<span class="can-name-soldout" style="color: var(--orange);">AGOTADAS</span>
+```
+CSS — diagonal text (no writing-mode, just rotate):
+```css
+.can-visual-placeholder .can-name-soldout {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: 0.08em;
+  transform: rotate(-45deg);
+  color: var(--white);
+}
+```
+
+### Carousel (≤1024px)
+Key challenge: `.product-section` has `overflow: hidden` (for the TRECE watermark `::before`). Overridden to `visible` at ≤1024px so horizontal scroll works.
+
+Negative-margin trick to break out of section's 24px padding while keeping first card indented:
+```css
+@media (max-width: 1024px) {
+  .product-section { overflow: visible; }
+
+  .flavors-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-left: 24px;
+    padding-right: 24px;
+    margin-left: -24px;
+    margin-right: -24px;
+    padding-bottom: 16px;
+    margin-bottom: 48px;
+  }
+
+  .flavor-card {
+    flex: 0 0 calc(85vw - 24px);
+    min-width: 0;
+    scroll-snap-align: start;
+    transition: none;
+  }
+}
+```
+
+**Peek math:** card = `(0.85 × vw) − 24px`. At 1024px → ~130px peek; at 390px → ~40px peek.
+
+---
+
 ## GitHub
 To push to GitHub after local setup:
 ```bash
