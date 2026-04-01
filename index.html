@@ -1451,7 +1451,10 @@
 
   @media (max-width: 768px) {
     .hero {
-      background-image: url('assets/images/banner1(1x1).png');
+      background-image: image-set(
+        url('assets/images/banner1.avif') type('image/avif'),
+        url('assets/images/banner1.jpg') type('image/jpeg')
+      );
       background-position: top center;
     }
 
@@ -1533,9 +1536,14 @@
   <!-- Product visual -->
   <div class="hero-product">
     <div class="can-visual" style="aspect-ratio:1; background: transparent; border-bottom: none;">
-      <img src="assets/images/banner1(1x1).png"
-           alt="TRECE Can"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <picture>
+        <source srcset="assets/images/banner1.avif" type="image/avif">
+        <source srcset="assets/images/banner1.jpg" type="image/jpeg">
+        <img src="assets/images/banner1.jpg"
+             alt="TRECE Can"
+             fetchpriority="high"
+             onerror="this.style.display='none'; this.parentElement.nextElementSibling.style.display='flex'">
+      </picture>
       <div class="can-visual-placeholder" style="display:none;">
         <span class="can-name">TRECE</span>
         <span class="product-placeholder-badge">Elixir Social</span>
