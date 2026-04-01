@@ -997,6 +997,10 @@
     border-bottom: 1px solid var(--grey-mid);
   }
 
+  .science-bottom {
+    display: block;
+  }
+
   .ingredients-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1005,9 +1009,28 @@
 
   .ingredient-card {
     background: var(--grey);
-    padding: 40px 32px;
+    padding: 0;
     transition: background 0.3s;
     position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ingredient-card-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .ingredient-card-body {
+    padding: 32px 32px 40px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .ingredient-card:hover { background: #222; }
@@ -1072,14 +1095,14 @@
      SOCIAL PROOF / MANIFESTO
   ========================================= */
   .manifesto-section {
-    padding: 0 48px 80px;
+    padding: 0 48px 0;
     background: var(--grey);
   }
 
   .manifesto-inner {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 80px 0;
+    padding: 80px 0 0;
     border-top: 1px solid rgba(107,174,212,0.1);
   }
 
@@ -1099,23 +1122,73 @@
     color: var(--blue);
   }
 
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
+  .manifesto-banner {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    min-height: 480px;
     margin-top: 80px;
   }
 
+  .manifesto-banner > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 65% center;
+    display: block;
+  }
+
+  .manifesto-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      rgba(8,8,8,0.88) 0%,
+      rgba(8,8,8,0.82) 30%,
+      rgba(8,8,8,0.3) 52%,
+      rgba(8,8,8,0.0) 70%
+    );
+    pointer-events: none;
+  }
+
+  .stats-col {
+    position: absolute;
+    top: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    width: 38%;
+  }
+
+  .stats-col--left { left: 0; padding: 40px 48px; }
+
   .stat-item {
-    background: var(--black);
-    padding: 40px 32px;
-    text-align: center;
+    background: rgba(8,8,8,0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(107,174,212,0.2);
+    padding: 20px 24px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-bottom: 2px;
   }
 
   .stat-value {
     font-family: var(--font-display);
     font-weight: 900;
-    font-size: clamp(48px, 6vw, 80px);
+    font-size: clamp(40px, 4.5vw, 72px);
     line-height: 1;
     letter-spacing: -0.03em;
     color: var(--white);
@@ -1125,21 +1198,22 @@
   .stat-value span { color: var(--blue); }
 
   .stat-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--grey-light);
+    font-family: var(--font-display);
+    font-size: clamp(11px, 1vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--white);
     text-transform: uppercase;
-    line-height: 1.5;
+    line-height: 1.4;
   }
 
   .stat-source {
     font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
-    color: rgba(138,138,138,0.5);
+    color: rgba(138,138,138,0.6);
     text-transform: uppercase;
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   /* =========================================
@@ -1415,8 +1489,9 @@
     .problem-can { width: 85%; max-width: 380px; aspect-ratio: 1; }
     .problem-right { height: 100%; padding: 16px 28px 48px; justify-content: center; }
 
-    .ingredients-grid,
-    .stats-row {
+    .manifesto-banner { min-height: 320px; }
+
+    .ingredients-grid {
       grid-template-columns: 1fr;
       gap: 2px;
     }
@@ -1463,8 +1538,47 @@
     }
 
     .nav-label { display: none; }
-    .stats-row { grid-template-columns: 1fr; }
-    .ingredients-grid { grid-template-columns: 1fr; }
+    .manifesto-banner {
+      min-height: auto;
+      overflow: hidden;
+      content-visibility: auto;
+    }
+    .manifesto-banner > img {
+      content: url('assets/images/foto06(vertical).png');
+      height: auto;
+      min-height: 560px;
+      object-position: center top;
+    }
+    .manifesto-overlay {
+      position: absolute;
+      inset: 0;
+      height: auto;
+      background: linear-gradient(
+        to right,
+        rgba(8,8,8,0.88) 0%,
+        rgba(8,8,8,0.72) 45%,
+        rgba(8,8,8,0.1) 75%
+      );
+    }
+    .stats-col {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 55%;
+      flex-direction: column;
+      overflow-x: visible;
+      scroll-snap-type: none;
+      padding: 24px 20px;
+      gap: 8px;
+      justify-content: center;
+    }
+    .stat-item {
+      flex: none;
+      scroll-snap-align: none;
+      background: rgba(8,8,8,0.72);
+      padding: 16px 18px;
+      border: 1px solid rgba(107,174,212,0.2);
+    }
+    .ingredients-grid { flex-direction: column; }
   }
 
   @media (max-width: 1024px) {
@@ -1698,21 +1812,28 @@
       "Hay conversaciones que solo pasan cuando estás <em>completamente presente</em>. Eso es lo que hacemos posible."
     </p>
 
-    <div class="stats-row">
-      <div class="stat-item reveal">
-        <p class="stat-value"><span>50</span>%</p>
-        <p class="stat-label">De adultos jóvenes en EE.UU.<br>ya no beben alcohol</p>
-        <p class="stat-source">Gallup, 2025 — Mínimo histórico en 90 años</p>
-      </div>
-      <div class="stat-item reveal reveal-delay-1">
-        <p class="stat-value"><span>7</span>/10</p>
-        <p class="stat-label">Consumidores evitan azúcar<br>añadida y edulcorantes</p>
-        <p class="stat-source">IFIC Food & Health Survey, 2023</p>
-      </div>
-      <div class="stat-item reveal reveal-delay-2">
-        <p class="stat-value"><span>35</span>%</p>
-        <p class="stat-label">Crecimiento anual del mercado<br>RTD no alcohólico en México</p>
-        <p class="stat-source">Food Tech, 2024</p>
+    <div class="manifesto-banner">
+      <img src="assets/images/banner3(horizontal).png" alt="TRECE — Socializa sin ceder terreno">
+      <div class="manifesto-overlay"></div>
+      <div class="stats-col stats-col--left">
+        <div class="stat-item reveal">
+          <p class="stat-tag">Tendencia:</p>
+          <p class="stat-value"><span>50</span>%</p>
+          <p class="stat-label">De adultos jóvenes en EE.UU.<br>ya no beben alcohol.</p>
+          <p class="stat-source">Gallup, 2025 — Mínimo histórico en 90 años</p>
+        </div>
+        <div class="stat-item reveal reveal-delay-1">
+          <p class="stat-tag">Preferencia:</p>
+          <p class="stat-value"><span>7</span>/10</p>
+          <p class="stat-label">Consumidores evitan azúcar<br>añadida y edulcorantes.</p>
+          <p class="stat-source">IFIC Food & Health Survey, 2023</p>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+          <p class="stat-tag">Oportunidad:</p>
+          <p class="stat-value"><span>35</span>%</p>
+          <p class="stat-label">Crecimiento anual del mercado<br>RTD no alcohólico en México.</p>
+          <p class="stat-source">Food Tech, 2024</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1731,30 +1852,41 @@
     </p>
   </div>
 
-  <div class="ingredients-grid">
-    <div class="ingredient-card reveal">
-      <p class="ingredient-num">01</p>
-      <h3 class="ingredient-name">L-Teanina</h3>
-      <p class="ingredient-latin">Camellia sinensis · Aminoácido</p>
-      <p class="ingredient-benefit">
-        Reduce la ansiedad social sin sedación. Activa el estado de <strong>alerta calmada</strong>: estás relajado pero completamente presente en la conversación.
-      </p>
-    </div>
-    <div class="ingredient-card reveal reveal-delay-1">
-      <p class="ingredient-num">02</p>
-      <h3 class="ingredient-name">Melena de León</h3>
-      <p class="ingredient-latin">Hericium erinaceus · Hongo funcional</p>
-      <p class="ingredient-benefit">
-        Estimula el factor de crecimiento nervioso (NGF). Claridad cognitiva, <strong>foco sostenido</strong>, sin el crash. Tu mente trabaja contigo, no contra ti.
-      </p>
-    </div>
-    <div class="ingredient-card reveal reveal-delay-2">
-      <p class="ingredient-num">03</p>
-      <h3 class="ingredient-name">Treonato de Mg</h3>
-      <p class="ingredient-latin">Magnesium threonate · Mineral nootrópico</p>
-      <p class="ingredient-benefit">
-        La forma de magnesio que cruza la barrera hematoencefálica. Regula el cortisol, mejora el sueño y la <strong>recuperación cognitiva</strong> al día siguiente.
-      </p>
+  <div class="science-bottom">
+    <div class="ingredients-grid">
+      <div class="ingredient-card reveal">
+        <img class="ingredient-card-img" src="assets/images/foto05.png" alt="L-Teanina">
+        <div class="ingredient-card-body">
+          <p class="ingredient-num">01</p>
+          <h3 class="ingredient-name">L-Teanina</h3>
+          <p class="ingredient-latin">Camellia sinensis · Aminoácido</p>
+          <p class="ingredient-benefit">
+            Reduce la ansiedad social sin sedación. Activa el estado de <strong>alerta calmada</strong>: estás relajado pero completamente presente en la conversación.
+          </p>
+        </div>
+      </div>
+      <div class="ingredient-card reveal reveal-delay-1">
+        <img class="ingredient-card-img" src="assets/images/foto01.png" alt="Melena de León">
+        <div class="ingredient-card-body">
+          <p class="ingredient-num">02</p>
+          <h3 class="ingredient-name">Melena de León</h3>
+          <p class="ingredient-latin">Hericium erinaceus · Hongo funcional</p>
+          <p class="ingredient-benefit">
+            Estimula el factor de crecimiento nervioso (NGF). Claridad cognitiva, <strong>foco sostenido</strong>, sin el crash. Tu mente trabaja contigo, no contra ti.
+          </p>
+        </div>
+      </div>
+      <div class="ingredient-card reveal reveal-delay-2">
+        <img class="ingredient-card-img" src="assets/images/foto02.png" alt="Treonato de Mg">
+        <div class="ingredient-card-body">
+          <p class="ingredient-num">03</p>
+          <h3 class="ingredient-name">Treonato de Mg</h3>
+          <p class="ingredient-latin">Magnesium threonate · Mineral nootrópico</p>
+          <p class="ingredient-benefit">
+            La forma de magnesio que cruza la barrera hematoencefálica. Regula el cortisol, mejora el sueño y la <strong>recuperación cognitiva</strong> al día siguiente.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
