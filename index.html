@@ -475,7 +475,7 @@
   ========================================= */
   .problem-section {
     position: relative;
-    height: 204vh;
+    height: 320vh;
     padding: 0;
     max-width: none;
     margin: 0;
@@ -504,6 +504,17 @@
     aspect-ratio: 1;
     display: block;
     border-radius: 8px;
+  }
+
+  .problem-can.can-loading {
+    animation: canPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes canPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .problem-can.can-loading { animation: none; }
   }
 
   .problem-right {
@@ -1397,10 +1408,10 @@
       gap: 48px;
     }
 
-    .problem-section { height: 140vh; }
+    .problem-section { height: 260vh; }
     .problem-pin { position: sticky; top: 0; grid-template-columns: 1fr; grid-template-rows: 54vh 1fr; height: 100vh; align-items: start; }
     .problem-left { height: 54vh; align-items: flex-end; padding-bottom: 0; }
-    .problem-can { width: 72%; max-width: 320px; aspect-ratio: 1; }
+    .problem-can { width: 85%; max-width: 380px; aspect-ratio: 1; }
     .problem-right { height: 100%; padding: 16px 28px 48px; justify-content: center; }
 
     .ingredients-grid,
@@ -1511,11 +1522,6 @@
     terreno.
   </h1>
 
-  <p class="hero-sub">
-    L-Teanina · Melena de León · Treonato de Magnesio.<br>
-    Claridad mental para las conversaciones que importan.
-  </p>
-
   <div class="hero-actions">
     <a href="#comprar" class="btn-primary">Pedir ahora — Pack x6</a>
     <span class="hero-proof">
@@ -1564,7 +1570,7 @@
 
     <!-- Left: can frame sequence -->
     <div class="problem-left">
-      <canvas id="can-canvas" class="problem-can" width="960" height="960"></canvas>
+      <canvas id="can-canvas" class="problem-can can-loading" width="960" height="960"></canvas>
     </div>
 
     <!-- Right: stacked stage — title + cards replace each other -->
@@ -1602,8 +1608,7 @@
       <div>
         <p class="section-label">Los sabores</p>
         <h2 class="product-section-headline">
-          Elige tu<br>
-          <em>Elixir</em>
+          Elige tu <em>Elixir</em>
         </h2>
       </div>
       <p class="product-section-sub">
@@ -1630,6 +1635,7 @@
         <p class="flavor-name">Azul · Clásico</p>
         <p class="flavor-desc">Mandarina — Limón — Cardamomo</p>
         <p class="flavor-ingredients">Melena de León · Treonato de Mg · L-Teanina</p>
+        <a href="#" class="btn-primary" style="margin-top: 24px; white-space:nowrap;">Agregar al carrito →</a>
       </div>
 
       <!-- Flavor 2 -->
@@ -1665,24 +1671,6 @@
       </div>
     </div>
 
-    <!-- Bundle CTA -->
-    <div class="bundle-block reveal" id="comprar">
-      <div class="bundle-tag">Más popular</div>
-      <div>
-        <h3 class="bundle-title">Pack<br>Explorador<br>x6</h3>
-        <p class="bundle-desc">
-          Para que encuentres el tuyo sin comprometerte. Sin azúcar, sin resaca, con todo lo que necesitas para llegar al otro día siendo tú.
-        </p>
-      </div>
-      <div class="bundle-right">
-        <div>
-          <p class="bundle-price"><sub>$</sub>89.900</p>
-          <p class="bundle-price-unit">COP · 6 latas · 269ml c/u</p>
-        </div>
-        <a href="#" class="btn-primary" style="white-space:nowrap;">Agregar al carrito →</a>
-        <p style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--grey-light); text-transform: uppercase;">Envío gratis · Medellín y Bogotá</p>
-      </div>
-    </div>
 
   </div>
 </section>
@@ -1723,7 +1711,8 @@
       Un <em>propósito.</em>
     </h2>
     <p class="science-intro reveal">
-      TRECE fue formulado para reducir la ansiedad social, sostener el foco mental y proteger tu rendimiento al día siguiente. Cada ingrediente tiene un trabajo específico.
+      L-Teanina · Melena de León · Treonato de Magnesio.<br>
+      Claridad mental para las conversaciones que importan.
     </p>
   </div>
 
@@ -1901,17 +1890,49 @@
     ctx.drawImage(img, 0, 0, canvasEl.width, canvasEl.height);
   }
 
-  if (canvasEl && ctx) {
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
+  function drawPlaceholder() {
+    if (!ctx) return;
+    ctx.fillStyle = '#0d0d0d';
+    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+    ctx.beginPath();
+    ctx.arc(canvasEl.width / 2, canvasEl.height / 2, canvasEl.width * 0.38, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(107,174,212,0.15)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function loadBatch(from, to) {
+    for (let i = from; i <= to; i++) {
+      const img    = new Image();
       const padded = String(i).padStart(3, '0');
       img.src = `assets/images/frames/frame-${padded}.jpg`;
-      img.onload = () => {
-        framesLoaded++;
-        if (i === 1) drawFrame(0);
-      };
-      frames.push(img);
+      img.onload = () => { framesLoaded++; };
+      frames[i - 1] = img;
     }
+  }
+
+  function startFrameLoad() {
+    const first = new Image();
+    first.src = 'assets/images/frames/frame-001.jpg';
+    first.onload = () => {
+      framesLoaded++;
+      canvasEl.classList.remove('can-loading');
+      drawFrame(0);
+      loadBatch(2, 10);
+      loadBatch(11, FRAME_COUNT);
+    };
+    frames[0] = first;
+  }
+
+  if (canvasEl && ctx && problemSection) {
+    drawPlaceholder();
+    const lazyObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        lazyObserver.disconnect();
+        startFrameLoad();
+      }
+    }, { rootMargin: '300px 0px 300px 0px' });
+    lazyObserver.observe(problemSection);
   }
   // ───────────────────────────────────────────────────────────────────
 
