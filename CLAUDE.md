@@ -193,6 +193,39 @@ Negative-margin trick to break out of section's 24px padding while keeping first
 
 **Peek math:** card = `(0.85 × vw) − 24px`. At 1024px → ~130px peek; at 390px → ~40px peek.
 
+### Known bug — Reveal animation causes carousel jump
+
+**Root cause:** The `.reveal` class sets `transform: translateY(24px)` on elements initially. The `IntersectionObserver` adds `.visible` when an element enters the viewport, snapping the transform to `translateY(0)`. In a horizontal scroll carousel, cards 2+ enter the viewport mid-swipe — causing a visible 24px vertical jump (glitch).
+
+**Rule:** Any element inside a horizontal scroll carousel that has the `.reveal` class **must** have the reveal animation disabled in the mobile media query. Always add:
+
+```css
+@media (max-width: 1024px) {
+  /* Kill reveal animation inside [carousel-container] — IntersectionObserver fires
+     mid-swipe causing a 24px translateY jump that glitches the carousel */
+  [carousel-container] .reveal,
+  [carousel-container] .reveal.visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+```
+
+**Currently applied to:**
+- `.flavors-grid .reveal` — flavor cards carousel (product section)
+- `.stats-col .reveal` — stat cards carousel (manifesto section)
+
+If you add a new horizontal scroll carousel on mobile and place `.reveal` elements inside it, apply the same fix.
+
+---
+
+## Section: Manifesto / Social Proof — Stat Cards Carousel (Mobile)
+
+On mobile (≤768px), the three `.stat-item` cards inside `.stats-col` become a horizontal snap carousel (same pattern as flavor cards). The `.stats-carousel-wrap` becomes `position: absolute; inset: 0` and `.stats-col` switches to `flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory`.
+
+Each `.stat-item` has `flex: 0 0 calc(100% - 40px)` so it nearly fills the banner width, with the next card peeking.
+
 ---
 
 ## GitHub

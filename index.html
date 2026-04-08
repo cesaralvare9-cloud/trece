@@ -632,7 +632,7 @@
      PRODUCT SECTION
   ========================================= */
   .product-section {
-    padding: 80px 48px 120px;
+    padding: 80px 48px 48px;
     background: var(--grey);
     position: relative;
     overflow: hidden;
@@ -1102,7 +1102,7 @@
   .manifesto-inner {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 80px 0 0;
+    padding: 40px 0 0;
     border-top: 1px solid rgba(107,174,212,0.1);
   }
 
@@ -1164,6 +1164,8 @@
   }
 
   .stats-col--left { left: 0; padding: 40px 48px; }
+  .stats-carousel-wrap { position: static; display: contents; pointer-events: none; }
+  .stats-next-btn { display: none; }
 
   .stat-item {
     background: rgba(8,8,8,0.72);
@@ -1483,7 +1485,7 @@
       gap: 48px;
     }
 
-    .problem-section { height: 260vh; }
+    .problem-section { height: 320vh; }
     .problem-pin { position: sticky; top: 0; grid-template-columns: 1fr; grid-template-rows: 54vh 1fr; height: 100vh; align-items: start; }
     .problem-left { height: 54vh; align-items: flex-end; padding-bottom: 0; }
     .problem-can { width: 85%; max-width: 380px; aspect-ratio: 1; }
@@ -1518,7 +1520,8 @@
     .ritual-section, .final-cta,
     .product-section { padding-left: 24px; padding-right: 24px; }
 
-    .product-section { padding-bottom: 48px; }
+    .product-section { padding-bottom: 0; }
+    .manifesto-inner { padding-top: 24px; }
     .science-section, .ritual-section, .final-cta { padding-top: 64px; padding-bottom: 64px; }
 
     .manifesto-section { padding-left: 24px; padding-right: 24px; }
@@ -1545,9 +1548,9 @@
     }
     .manifesto-banner > img {
       content: url('assets/images/foto06(vertical).png');
-      height: auto;
-      min-height: 560px;
-      object-position: center top;
+      height: 320px;
+      min-height: unset;
+      object-position: center center;
     }
     .manifesto-overlay {
       position: absolute;
@@ -1560,24 +1563,63 @@
         rgba(8,8,8,0.1) 75%
       );
     }
-    .stats-col {
+    /* Stats carousel on mobile */
+    .stats-carousel-wrap {
       position: absolute;
-      top: 0; bottom: 0;
-      width: 55%;
-      flex-direction: column;
-      overflow-x: visible;
-      scroll-snap-type: none;
-      padding: 24px 20px;
-      gap: 8px;
-      justify-content: center;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      pointer-events: none;
     }
+    .stats-col {
+      position: static;
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 0 20px;
+      gap: 12px;
+      justify-content: flex-start;
+      pointer-events: auto;
+    }
+    .stats-col::-webkit-scrollbar { display: none; }
     .stat-item {
-      flex: none;
-      scroll-snap-align: none;
-      background: rgba(8,8,8,0.72);
-      padding: 16px 18px;
+      flex: 0 0 calc(100% - 40px);
+      scroll-snap-align: start;
+      background: rgba(8,8,8,0.80);
+      padding: 20px 20px;
       border: 1px solid rgba(107,174,212,0.2);
     }
+    /* Kill reveal animation on carousel stat cards — same glitch as flavor cards */
+    .stats-col .reveal,
+    .stats-col .reveal.visible {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .stats-next-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(107,174,212,0.18);
+      border: 1px solid rgba(107,174,212,0.45);
+      color: var(--blue);
+      cursor: pointer;
+      pointer-events: auto;
+      transition: opacity 0.3s, background 0.2s;
+    }
+    .stats-next-btn:active { background: rgba(107,174,212,0.35); }
+    .stats-next-btn.hidden { opacity: 0; pointer-events: none; }
     .ingredients-grid { flex-direction: column; }
   }
 
@@ -1597,8 +1639,8 @@
       padding-right: 24px;
       margin-left: -24px;
       margin-right: -24px;
-      padding-bottom: 16px;
-      margin-bottom: 48px;
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
 
     .flavors-grid::-webkit-scrollbar { display: none; }
@@ -1608,9 +1650,19 @@
       min-width: 0;
       scroll-snap-align: start;
       transition: none;
+      padding-bottom: 24px;
     }
 
     .flavor-card:hover { transform: none; }
+
+    /* Kill reveal animation on carousel cards — IntersectionObserver fires mid-scroll
+       causing a 24px translateY jump that glitches the carousel */
+    .flavors-grid .reveal,
+    .flavors-grid .reveal.visible {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 </style>
 </head>
@@ -1815,25 +1867,32 @@
     <div class="manifesto-banner">
       <img src="assets/images/banner3(horizontal).png" alt="TRECE — Socializa sin ceder terreno">
       <div class="manifesto-overlay"></div>
-      <div class="stats-col stats-col--left">
-        <div class="stat-item reveal">
-          <p class="stat-tag">Tendencia:</p>
-          <p class="stat-value"><span>50</span>%</p>
-          <p class="stat-label">De adultos jóvenes en EE.UU.<br>ya no beben alcohol.</p>
-          <p class="stat-source">Gallup, 2025 — Mínimo histórico en 90 años</p>
+      <div class="stats-carousel-wrap">
+        <div class="stats-col stats-col--left" id="statsCarousel">
+          <div class="stat-item reveal">
+            <p class="stat-tag">Tendencia:</p>
+            <p class="stat-value"><span>50</span>%</p>
+            <p class="stat-label">De adultos jóvenes en EE.UU.<br>ya no beben alcohol.</p>
+            <p class="stat-source">Gallup, 2025 — Mínimo histórico en 90 años</p>
+          </div>
+          <div class="stat-item reveal reveal-delay-1">
+            <p class="stat-tag">Preferencia:</p>
+            <p class="stat-value"><span>7</span>/10</p>
+            <p class="stat-label">Consumidores evitan azúcar<br>añadida y edulcorantes.</p>
+            <p class="stat-source">IFIC Food & Health Survey, 2023</p>
+          </div>
+          <div class="stat-item reveal reveal-delay-2">
+            <p class="stat-tag">Oportunidad:</p>
+            <p class="stat-value"><span>35</span>%</p>
+            <p class="stat-label">Crecimiento anual del mercado<br>RTD no alcohólico en México.</p>
+            <p class="stat-source">Food Tech, 2024</p>
+          </div>
         </div>
-        <div class="stat-item reveal reveal-delay-1">
-          <p class="stat-tag">Preferencia:</p>
-          <p class="stat-value"><span>7</span>/10</p>
-          <p class="stat-label">Consumidores evitan azúcar<br>añadida y edulcorantes.</p>
-          <p class="stat-source">IFIC Food & Health Survey, 2023</p>
-        </div>
-        <div class="stat-item reveal reveal-delay-2">
-          <p class="stat-tag">Oportunidad:</p>
-          <p class="stat-value"><span>35</span>%</p>
-          <p class="stat-label">Crecimiento anual del mercado<br>RTD no alcohólico en México.</p>
-          <p class="stat-source">Food Tech, 2024</p>
-        </div>
+        <button class="stats-next-btn" id="statsNextBtn" aria-label="Siguiente stat">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -2034,12 +2093,16 @@
     const img = frames[index];
     if (!img || !img.complete || img.naturalWidth === 0) return;
     ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    ctx.fillStyle = '#080808';
+    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+    ctx.globalCompositeOperation = 'lighten';
     ctx.drawImage(img, 0, 0, canvasEl.width, canvasEl.height);
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   function drawPlaceholder() {
     if (!ctx) return;
-    ctx.fillStyle = '#0d0d0d';
+    ctx.fillStyle = '#080808';
     ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
     ctx.beginPath();
     ctx.arc(canvasEl.width / 2, canvasEl.height / 2, canvasEl.width * 0.38, 0, Math.PI * 2);
@@ -2166,6 +2229,22 @@
   }, { threshold: 0.5 });
 
   statValues.forEach(el => statObserver.observe(el));
+
+  // Stats carousel next button (mobile only)
+  const statsCarousel = document.getElementById('statsCarousel');
+  const statsNextBtn  = document.getElementById('statsNextBtn');
+  if (statsCarousel && statsNextBtn) {
+    function updateStatsArrow() {
+      const maxScroll = statsCarousel.scrollWidth - statsCarousel.clientWidth;
+      statsNextBtn.classList.toggle('hidden', statsCarousel.scrollLeft >= maxScroll - 4);
+    }
+    statsNextBtn.addEventListener('click', () => {
+      const cardW = statsCarousel.querySelector('.stat-item').offsetWidth + 12; // gap=12
+      statsCarousel.scrollBy({ left: cardW, behavior: 'smooth' });
+    });
+    statsCarousel.addEventListener('scroll', updateStatsArrow, { passive: true });
+    updateStatsArrow();
+  }
 </script>
 
 </body>
