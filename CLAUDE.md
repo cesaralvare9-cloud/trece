@@ -38,6 +38,28 @@ INVIMA: RSA-1472-2025
 - **Melena de León** (Hericium erinaceus) — NGF stimulation, cognitive clarity
 - **Treonato de Magnesio** — crosses blood-brain barrier, cortisol regulation, sleep recovery
 
+## Deployment & URLs
+
+| Environment | URL | Platform |
+|-------------|-----|----------|
+| Landing page | `https://www.drinktrece.com` | Netlify |
+| Product store | `https://shop.drinktrece.com` | Shopify |
+
+**All CTA buttons** in `index.html` link to:
+`https://shop.drinktrece.com/products/drink-club-13-original`
+
+### Shopify — Header Logo Redirect
+The logo in the Shopify store header (`header.liquid`) links back to the landing page instead of the store root. There are **2 anchor tags** to keep in sync — one for `logo_position != 'middle-center'` and one for `logo_position == 'middle-center'`:
+
+```liquid
+<!-- Both instances should read: -->
+<a href="https://www.drinktrece.com" class="header__heading-link link link--text focus-inset">
+```
+
+Do **not** use `{{ routes.root_url }}` for the logo href — that would send users to the Shopify store root instead of the main landing page.
+
+---
+
 ## File Structure
 ```
 TRECE/
