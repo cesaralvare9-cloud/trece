@@ -1587,7 +1587,8 @@
     }
     .stats-col::-webkit-scrollbar { display: none; }
     .stat-item {
-      flex: 0 0 calc(72vw - 24px);
+      flex: 0 0 auto;
+      width: fit-content;
       scroll-snap-align: start;
       background: rgba(8,8,8,0.80);
       padding: 20px 20px;
@@ -1912,7 +1913,6 @@
   <div class="science-bottom">
     <div class="ingredients-grid">
       <div class="ingredient-card reveal">
-        <img class="ingredient-card-img" src="assets/images/foto05.png" alt="L-Teanina">
         <div class="ingredient-card-body">
           <p class="ingredient-num">01</p>
           <h3 class="ingredient-name">L-Teanina</h3>
@@ -1923,7 +1923,6 @@
         </div>
       </div>
       <div class="ingredient-card reveal reveal-delay-1">
-        <img class="ingredient-card-img" src="assets/images/foto01.png" alt="Melena de León">
         <div class="ingredient-card-body">
           <p class="ingredient-num">02</p>
           <h3 class="ingredient-name">Melena de León</h3>
@@ -1934,7 +1933,6 @@
         </div>
       </div>
       <div class="ingredient-card reveal reveal-delay-2">
-        <img class="ingredient-card-img" src="assets/images/foto02.png" alt="Treonato de Mg">
         <div class="ingredient-card-body">
           <p class="ingredient-num">03</p>
           <h3 class="ingredient-name">Treonato de Mg</h3>
