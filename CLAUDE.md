@@ -45,6 +45,18 @@ INVIMA: RSA-1472-2025
 | Landing page | `https://www.drinktrece.com` | Netlify |
 | Product store | `https://shop.drinktrece.com` | Shopify |
 
+### DNS Setup (GoDaddy)
+
+Domain registrar: **GoDaddy**. Required DNS records for `drinktrece.com`:
+
+| Type | Name | Data |
+|------|------|------|
+| A | `@` | `75.2.60.5` (Netlify load balancer) |
+| CNAME | `www` | `trecewebsite.netlify.app.` |
+| CNAME | `shop` | `shops.myshopify.com.` |
+
+**Important:** GoDaddy adds a default `A @ → Parked` record when a domain is registered. This record must be deleted — it conflicts with the Netlify A record and redirects visitors to a GoDaddy parked page (searchhounds.com). If the site ever stops resolving, check for a rogue `Parked` A record in GoDaddy DNS.
+
 **All CTA buttons** in `index.html` link to:
 `https://shop.drinktrece.com/products/drink-club-13-original`
 
