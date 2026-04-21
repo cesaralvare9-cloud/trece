@@ -21,7 +21,7 @@
     --grey-mid: #2E2E2E;
     --grey-light: #8A8A8A;
     --orange: #D4673B;
-    --purple-accent: #9B8FD4;
+    --purple-accent: #CC2020;
 
     --font-display: 'Barlow Condensed', sans-serif;
     --font-body: 'Barlow', sans-serif;
@@ -297,6 +297,24 @@
     background: var(--white);
     transform: translateY(-2px);
     box-shadow: 0 20px 40px rgba(107,174,212,0.25);
+  }
+
+  .btn-primary.btn-orange {
+    background: var(--orange);
+    box-shadow: none;
+  }
+  .btn-primary.btn-orange:hover {
+    background: var(--white);
+    box-shadow: 0 20px 40px rgba(212,103,59,0.25);
+  }
+
+  .btn-primary.btn-purple {
+    background: var(--purple-accent);
+    box-shadow: none;
+  }
+  .btn-primary.btn-purple:hover {
+    background: var(--white);
+    box-shadow: 0 20px 40px rgba(155,143,212,0.25);
   }
 
   .btn-primary:hover::after { transform: translateX(100%) skewX(-15deg); }
@@ -715,7 +733,7 @@
 
   .flavor-card.blue::before { background: linear-gradient(135deg, rgba(107,174,212,0.06) 0%, transparent 60%); }
   .flavor-card.orange::before { background: linear-gradient(135deg, rgba(212,103,59,0.06) 0%, transparent 60%); }
-  .flavor-card.purple::before { background: linear-gradient(135deg, rgba(155,143,212,0.06) 0%, transparent 60%); }
+  .flavor-card.purple::before { background: linear-gradient(135deg, rgba(204,32,32,0.06) 0%, transparent 60%); }
 
   .flavor-card:hover { transform: translateY(-4px); }
   .flavor-card:hover::before { opacity: 1; }
@@ -1501,11 +1519,13 @@
       gap: 48px;
     }
 
-    .problem-section { height: 320vh; }
-    .problem-pin { position: sticky; top: 0; grid-template-columns: 1fr; grid-template-rows: 44vh 1fr; height: 100vh; align-items: start; }
-    .problem-left { height: 44vh; align-items: flex-end; padding-bottom: 0; }
+    .problem-section { height: 260vh; }
+    .problem-pin { position: sticky; top: 140px; grid-template-columns: 1fr; grid-template-rows: 38vh 1fr; height: calc(100vh - 140px); align-items: start; }
+    .problem-left { height: 38vh; align-items: center; padding-bottom: 0; }
     .problem-can { width: 85%; max-width: 380px; aspect-ratio: 1; }
-    .problem-right { height: 100%; padding: 4px 28px 48px; justify-content: center; }
+    .problem-right { height: 100%; padding: 4px 28px 16px; justify-content: flex-start; }
+    .problem-statement p { font-size: 18px; }
+    .problem-statement { padding: 12px 20px; }
 
     .manifesto-banner { min-height: 320px; }
 
@@ -1557,12 +1577,31 @@
 
   @media (max-width: 768px) {
     .hero {
-      background-image: image-set(
-        url('assets/images/banner1.avif') type('image/avif'),
-        url('assets/images/banner1.jpg') type('image/jpeg')
-      );
-      background-position: top center;
+      background-image: url('assets/images/banner3(horizontal).png');
+      background-size: cover;
+      background-position: center center;
+      justify-content: flex-start;
+      padding: 100px 28px 52px;
     }
+
+    .hero::after {
+      background: linear-gradient(
+        to bottom,
+        rgba(8,8,8,0.55) 0%,
+        rgba(8,8,8,0.2) 30%,
+        transparent 45%,
+        rgba(8,8,8,0.65) 65%,
+        rgba(8,8,8,0.92) 85%
+      );
+    }
+
+    .hero-sub {
+      margin-top: auto;
+    }
+
+    .cursor, .cursor-ring { display: none; }
+    body, a, button, .flavor-card { cursor: auto; }
+    .hero-eyebrow { margin-top: 40px; }
 
     .nav-label { display: none; }
     .manifesto-banner {
@@ -1702,7 +1741,7 @@
 
 <!-- =================== NAVIGATION =================== -->
 <nav>
-  <a href="#" class="nav-logo">TRECE</a>
+  <a href="#" class="nav-logo"><img src="assets/images/ticket icon.png" alt="TRECE" style="height: 100px; width: auto; display: block;"></a>
   <div class="nav-right">
     <a href="#producto" class="nav-label">Producto</a>
     <a href="#ciencia" class="nav-label">Ingredientes</a>
@@ -1832,7 +1871,7 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual can-visual-flip">
-          <img src="assets/images/lata frontal.png"
+          <img src="assets/images/Lata Azul.jpg"
                alt="TRECE Mandarina Limón"
                class="cover-fill can-img-front"
                onerror="this.style.display='none'">
@@ -1853,13 +1892,15 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual">
-          <div class="can-visual-placeholder" style="display:flex;">
-            <span class="can-name-soldout" style="color: var(--orange);">AGOTADAS</span>
-          </div>
+          <img src="assets/images/Lata Jamaica.png"
+               alt="TRECE Flor de Jamaica"
+               class="cover-fill"
+               onerror="this.style.display='none'">
         </div>
         <p class="flavor-name" style="color: var(--orange);">Naranja · Tropical</p>
         <p class="flavor-desc">Flor de Jamaica — Naranja — Jengibre</p>
         <p class="flavor-ingredients">Melena de León · Treonato de Mg · L-Teanina</p>
+        <a href="#" class="btn-primary btn-orange" style="margin-top: 24px; white-space:nowrap;">Agotado</a>
       </div>
 
       <!-- Flavor 3 -->
@@ -1869,13 +1910,15 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual">
-          <div class="can-visual-placeholder" style="display:flex;">
-            <span class="can-name-soldout" style="color: var(--purple-accent);">AGOTADAS</span>
-          </div>
+          <img src="assets/images/Lata Arandanos.png"
+               alt="TRECE Arándano Frambuesa"
+               class="cover-fill"
+               onerror="this.style.display='none'">
         </div>
         <p class="flavor-name">Morado · Frutal</p>
         <p class="flavor-desc">Arándano — Frambuesa</p>
         <p class="flavor-ingredients">Melena de León · Treonato de Mg · L-Teanina</p>
+        <a href="#" class="btn-primary btn-purple" style="margin-top: 24px; white-space:nowrap;">Agotado</a>
       </div>
     </div>
 
@@ -2043,7 +2086,7 @@
 <!-- =================== FOOTER =================== -->
 <footer>
   <div>
-    <p class="footer-logo">TRECE</p>
+    <img src="assets/images/ticket icon.png" alt="TRECE" class="footer-logo" style="height: 80px; width: auto; display: block;">
     <p class="footer-tagline" style="margin-top: 4px;">Elixir Social Funcional · 013</p>
   </div>
   <div class="footer-right">
