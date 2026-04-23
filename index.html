@@ -4,6 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRECE — Elixir Funcional Social</title>
+<link rel="icon" type="image/png" href="assets/images/ticket icon.png">
+
+<!-- SEO -->
+<meta name="description" content="TRECE — Elixir Funcional Social. Bebida espumosa no alcohólica con L-Teanina, Melena de León y Treonato de Magnesio. Socializa sin ceder terreno. Hecho en Colombia.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TRECE">
+<meta property="og:title" content="TRECE — Elixir Funcional Social">
+<meta property="og:description" content="Bebida espumosa no alcohólica con L-Teanina, Melena de León y Treonato de Magnesio. Socializa sin ceder terreno.">
+<meta property="og:url" content="https://www.drinktrece.com">
+<meta property="og:image" content="https://www.drinktrece.com/assets/images/banner1.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_CO">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TRECE — Elixir Funcional Social">
+<meta name="twitter:description" content="Bebida espumosa no alcohólica con L-Teanina, Melena de León y Treonato de Magnesio. Socializa sin ceder terreno.">
+<meta name="twitter:image" content="https://www.drinktrece.com/assets/images/banner1.jpg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -531,6 +553,12 @@
     0%, 100% { opacity: 1; }
     50%       { opacity: 0.45; }
   }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(5px); }
+  }
+  .scroll-hint { display: none; }
+  .stage-dots  { display: none; }
   @media (prefers-reduced-motion: reduce) {
     .problem-can.can-loading { animation: none; }
   }
@@ -1519,13 +1547,18 @@
       gap: 48px;
     }
 
-    .problem-section { height: 260vh; }
-    .problem-pin { position: sticky; top: 140px; grid-template-columns: 1fr; grid-template-rows: 38vh 1fr; height: calc(100vh - 140px); align-items: start; }
+    .problem-section { height: 200vh; }
+    .problem-pin { position: sticky; top: 140px; grid-template-columns: 1fr; grid-template-rows: 38vh auto; height: auto; align-items: start; background: var(--black); }
     .problem-left { height: 38vh; align-items: center; padding-bottom: 0; }
     .problem-can { width: 85%; max-width: 380px; aspect-ratio: 1; }
-    .problem-right { height: 100%; padding: 4px 28px 16px; justify-content: flex-start; }
+    .problem-right { height: auto; padding: 4px 28px 16px; justify-content: flex-start; }
     .problem-statement p { font-size: 18px; }
     .problem-statement { padding: 12px 20px; }
+    .stage-dots { display: flex; justify-content: center; gap: 8px; padding-top: 20px; }
+    .stage-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--grey-mid); transition: background 0.3s ease, transform 0.3s ease; }
+    .stage-dot.active { background: var(--blue); transform: scale(1.4); }
+    .scroll-hint { display: flex; justify-content: center; padding-top: 12px; padding-bottom: 8px; color: var(--blue); opacity: 0; transition: opacity 0.4s ease; }
+    .scroll-hint svg { animation: scrollBounce 1.4s ease-in-out infinite; }
 
     .manifesto-banner { min-height: 320px; }
 
@@ -1766,7 +1799,7 @@
   </p>
 
   <div class="hero-actions">
-    <a href="https://shop.drinktrece.com/products/drink-club-13-original" class="btn-primary">Pedir ahora — Pack x6</a>
+    <a href="https://shop.drinktrece.com/products/drink-club-13-original" class="btn-primary">Ordenar</a>
     <span class="hero-proof">
       <span class="hero-proof-dot"></span>
     </span>
@@ -1843,6 +1876,17 @@
           <p>TRECE existe porque <strong>socializar con claridad no es un sacrificio</strong> — es la versión más rica de la noche.</p>
         </div>
       </div>
+      <div class="stage-dots" aria-hidden="true">
+        <span class="stage-dot" data-dot="0"></span>
+        <span class="stage-dot" data-dot="1"></span>
+        <span class="stage-dot" data-dot="2"></span>
+        <span class="stage-dot" data-dot="3"></span>
+      </div>
+      <div class="scroll-hint" aria-hidden="true">
+        <svg width="22" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L11 11L21 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
 
   </div>
@@ -1871,7 +1915,7 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual can-visual-flip">
-          <img src="assets/images/Lata Azul.jpg"
+          <img src="assets/images/Lata Mandarina.png"
                alt="TRECE Mandarina Limón"
                class="cover-fill can-img-front"
                onerror="this.style.display='none'">
@@ -2078,8 +2122,8 @@
   </p>
   <div class="final-cta-actions reveal">
     <a href="https://shop.drinktrece.com/products/drink-club-13-original" class="btn-primary" style="font-size: 18px; padding: 20px 64px;">
-      Pedir Pack x6 →
-    </a>
+      Ordenar
+</a>
   </div>
 </section>
 
@@ -2244,6 +2288,17 @@
       el.style.opacity   = opacity;
       el.style.transform = `translateY(${ty_el}px)`;
     });
+
+    const activeStage = Math.min(Math.floor(progress * SLOTS), SLOTS - 1);
+    document.querySelectorAll('.stage-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === activeStage);
+    });
+
+    const scrollHint = document.querySelector('.scroll-hint');
+    if (scrollHint) {
+      const hintP = easeOut(clamp((progress - (3 * SLOT_W - FADE_W / 2)) / FADE_W, 0, 1));
+      scrollHint.style.opacity = hintP;
+    }
   }
 
   window.addEventListener('scroll', updateProblemSection, { passive: true });
