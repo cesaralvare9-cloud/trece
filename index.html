@@ -559,6 +559,7 @@
   }
   .scroll-hint { display: none; }
   .stage-dots  { display: none; }
+  .continue-indicator { display: none; }
   @media (prefers-reduced-motion: reduce) {
     .problem-can.can-loading { animation: none; }
   }
@@ -1560,6 +1561,34 @@
     .scroll-hint { display: flex; justify-content: center; padding-top: 16px; padding-bottom: 16px; color: var(--blue); opacity: 0; transition: opacity 0.4s ease; }
     .scroll-hint svg { animation: scrollBounce 1.4s ease-in-out infinite; }
 
+    .continue-indicator {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0.85;
+    }
+    .continue-line {
+      width: 1px;
+      height: 48px;
+      background: var(--blue);
+    }
+    .continue-text {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+
     .manifesto-banner { min-height: 320px; }
 
     .science-mobile-img {
@@ -1789,9 +1818,9 @@
   <p class="hero-eyebrow">Elixir Social Funcional · 013</p>
 
   <h1 class="hero-headline">
-    Socializa<br>
-    sin <em>ceder</em><br>
-    terreno.
+    La primera bebida<br>
+    social, <em>funcional</em><br>
+    y sin alcohol.
   </h1>
 
   <p class="hero-sub">
@@ -1888,6 +1917,10 @@
         </svg>
       </div>
     </div>
+    <div class="continue-indicator" aria-hidden="true">
+      <span class="continue-line"></span>
+      <span class="continue-text">CONTINÚA</span>
+    </div>
 
   </div>
 </section>
@@ -1915,7 +1948,7 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual can-visual-flip">
-          <img src="assets/images/lata-mandarina-high.jpg"
+          <img src="assets/images/lata-mandarina-gpt.png"
                alt="TRECE Mandarina Limón"
                class="cover-fill can-img-front"
                onerror="this.style.display='none'">
@@ -1936,7 +1969,7 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual">
-          <img src="assets/images/lata-jamaica2.jpg"
+          <img src="assets/images/lata-jamaica-gpt.png"
                alt="TRECE Flor de Jamaica"
                class="cover-fill"
                onerror="this.style.display='none'">
@@ -1954,7 +1987,7 @@
           <span class="flavor-dot"></span>
         </div>
         <div class="can-visual">
-          <img src="assets/images/lata-arandanos2.jpg"
+          <img src="assets/images/lata-arandanos-gpt.jpg"
                alt="TRECE Arándano Frambuesa"
                class="cover-fill"
                onerror="this.style.display='none'">
