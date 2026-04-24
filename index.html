@@ -264,6 +264,12 @@
     color: var(--blue);
   }
 
+  .hero-headline .br-desktop { display: none; }
+  @media (min-width: 769px) {
+    .hero-headline .br-mobile  { display: none; }
+    .hero-headline .br-desktop { display: inline; }
+  }
+
   .hero-sub {
     margin-top: 32px;
     font-size: 18px;
@@ -1818,9 +1824,10 @@
   <p class="hero-eyebrow">Elixir Social Funcional · 013</p>
 
   <h1 class="hero-headline">
-    La primera bebida<br>
-    social, <em>funcional</em><br>
-    y sin alcohol.
+    La primera bebida<br class="br-mobile">
+    social,<br class="br-desktop">
+    <em>funcional</em><br>
+    sin alcohol.
   </h1>
 
   <p class="hero-sub">
