@@ -70,6 +70,15 @@ The logo in the Shopify store header (`header.liquid`) links back to the landing
 
 Do **not** use `{{ routes.root_url }}` for the logo href — that would send users to the Shopify store root instead of the main landing page.
 
+### Analytics & Tracking — Meta Pixel
+The Meta (Facebook) Pixel is installed in the `<head>` of `index.html`, after the Google Fonts `<link>` and before the `<style>` block.
+
+- **Pixel ID:** `976351821951853`
+- Fires `fbq('init', ...)` + `fbq('track', 'PageView')` on every page load, with a `<noscript>` fallback `<img>`.
+- Keep it high in the `<head>` so it loads early.
+
+To verify it's live: load `https://www.drinktrece.com` → DevTools Network tab → confirm requests to `connect.facebook.net/en_US/fbevents.js` and `facebook.com/tr?id=976351821951853&ev=PageView`. Or use the Meta Pixel Helper extension / Events Manager → Test Events.
+
 ---
 
 ## File Structure
