@@ -6,6 +6,9 @@ Non-alcoholic functional sparkling drink. Made in Rionegro, Antioquia, Colombia.
 Tagline: *"Socializa sin ceder terreno."*
 INVIMA: RSA-1472-2025
 
+## Copywriting Rule
+**Never use dashes ("—" or "-") in any copy/text.** Replace with a period, comma, or rewrite the sentence. Applies to ad copies, headlines, and site text. Full ad-copy style guide and approved copies live in `anuncios-copies-aprobados.md`.
+
 ## Stack
 - Single-file HTML (`index.html`) with inline CSS and JS
 - No build tools, no frameworks, no dependencies

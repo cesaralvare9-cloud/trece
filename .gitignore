@@ -6,3 +6,8 @@ node_modules/
 .idea/
 .vscode/
 *.log
+
+# Claude Code / agent tooling (local environment, not part of the site)
+.agents/
+.claude/
+skills-lock.json
